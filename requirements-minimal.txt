@@ -1,0 +1,38 @@
+# Minimal requirements for Python 3.9+
+# Use this if requirements.txt fails
+
+# FastAPI and server
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+python-multipart>=0.0.6
+websockets>=11.0
+
+# CrewAI for multi-agent system
+crewai>=0.11.0
+langchain>=0.1.0
+langchain-community>=0.0.20
+
+# Ollama for local LLM
+ollama>=0.1.0
+
+# Database
+sqlalchemy>=2.0.0
+alembic>=1.12.0
+psycopg2-binary>=2.9.0
+asyncpg>=0.28.0
+
+# Redis
+redis>=4.5.0
+
+# Data validation
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+hypothesis>=6.90.0
+httpx>=0.25.0
+
+# Utilities
+python-dotenv>=1.0.0
