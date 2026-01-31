@@ -1,0 +1,8 @@
+# Simplified requirements without compilation dependencies
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.6.0
+python-multipart>=0.0.9
+
+# Alternative to chromadb - use simple dict storage for now
+# chromadb==0.4.22

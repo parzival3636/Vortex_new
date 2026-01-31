@@ -91,8 +91,12 @@ const OwnerDashboard = () => {
           info: {
             'Status': truck.status,
             'Load': truck.load || 'Empty',
-            'Earnings': `₹${truck.earnings.toLocaleString()}`
-          }
+            'Earnings': `₹${truck.earnings.toLocaleString()}`,
+            'Distance': `${truck.distance}km`,
+            'Fuel Efficiency': `${truck.fuelEfficiency} km/L`
+          },
+          eta: truck.destination ? '2h 30m' : null,
+          radius: 10000 // 10km radius
         }
       ];
 
@@ -102,7 +106,11 @@ const OwnerDashboard = () => {
           lng: truck.destination.lng,
           type: 'destination',
           title: 'Destination',
-          address: truck.destination.address
+          address: truck.destination.address,
+          info: {
+            'ETA': '2h 30m',
+            'Distance': '145 km'
+          }
         });
       }
 
@@ -118,7 +126,8 @@ const OwnerDashboard = () => {
       address: truck.currentLocation.address,
       info: {
         'Status': truck.status,
-        'Load': truck.load || 'Empty'
+        'Load': truck.load || 'Empty',
+        'Earnings': `₹${truck.earnings.toLocaleString()}`
       }
     }));
   };
@@ -127,13 +136,17 @@ const OwnerDashboard = () => {
     if (selectedTruck) {
       const truck = fleet.find(t => t.id === selectedTruck);
       if (truck.destination) {
+        const isInTransit = truck.status === 'in-transit';
         return [{
           positions: [
             [truck.currentLocation.lat, truck.currentLocation.lng],
             [truck.destination.lat, truck.destination.lng]
           ],
           color: '#3B82F6',
-          weight: 4
+          weight: 5,
+          completed: false,
+          remaining: !isInTransit,
+          opacity: isInTransit ? 0.8 : 0.5
         }];
       }
     }
@@ -269,6 +282,15 @@ const OwnerDashboard = () => {
                 markers={getMapMarkers()}
                 routes={getMapRoutes()}
                 height="400px"
+                liveTracking={selectedTruck !== null}
+                trackingData={selectedTruck ? {
+                  timestamp: new Date().toISOString(),
+                  speed: fleet.find(t => t.id === selectedTruck)?.fuelEfficiency * 10 || 65,
+                  progress: fleet.find(t => t.id === selectedTruck)?.status === 'in-transit' ? 45 : 0,
+                  label: fleet.find(t => t.id === selectedTruck)?.license || 'Fleet Tracking'
+                } : null}
+                autoCenter={selectedTruck !== null}
+                zoom={selectedTruck ? 10 : 6}
               />
             </div>
 

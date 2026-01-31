@@ -190,27 +190,30 @@ def create_load_by_address(load_data: LoadCreateByAddress):
 
 
 @router.get("/geocode/search")
-def search_places(query: str, limit: int = 5):
+def search_places(query: str, limit: int = 8):
     """
-    Search for places using OpenStreetMap
+    Fast autocomplete search for places with street-level precision
     
-    Useful for autocomplete in frontend forms.
+    Useful for autocomplete in frontend forms with detailed address components.
     
-    Example: /api/v1/vendors/geocode/search?query=market%20yard%20mumbai
+    Example: /api/v1/vendors/geocode/search?query=MG%20Road%20Bangalore&limit=8
+    
+    Returns detailed results with address components, type, and relevance score.
     """
-    results = geocoding_service.search_places(query, limit=limit)
+    if len(query) < 3:
+        return {
+            "query": query,
+            "count": 0,
+            "results": [],
+            "message": "Query must be at least 3 characters"
+        }
+    
+    results = geocoding_service.autocomplete(query, limit=limit)
     
     return {
         "query": query,
         "count": len(results),
-        "results": [
-            {
-                "address": r.address,
-                "lat": r.lat,
-                "lng": r.lng
-            }
-            for r in results
-        ]
+        "results": results
     }
 
 
