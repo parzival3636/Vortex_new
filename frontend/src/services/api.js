@@ -53,13 +53,36 @@ export const demoAPI = {
   getDemoData: () => api.get('/demo/data'),
 };
 
-// Scheduler API
+// Scheduler API (Auto-scheduler for load matching)
 export const schedulerAPI = {
   start: () => api.post('/scheduler/start'),
   stop: () => api.post('/scheduler/stop'),
   getStatus: () => api.get('/scheduler/status'),
   forceRun: () => api.post('/scheduler/force-run'),
   getStats: () => api.get('/scheduler/stats'),
+};
+
+// Report Scheduler API (Daily financial reports at 8 PM)
+export const reportSchedulerAPI = {
+  start: () => api.post('/report-scheduler/start'),
+  stop: () => api.post('/report-scheduler/stop'),
+  getStatus: () => api.get('/report-scheduler/status'),
+  forceRun: () => api.post('/report-scheduler/force-run'),
+};
+
+// Financial Reports API
+export const financialAPI = {
+  // Expenses
+  createExpense: (data) => api.post('/financial/expenses', data),
+  getDailyExpenses: (date, driverId) => 
+    api.get(`/financial/expenses/${date}`, { params: { driver_id: driverId } }),
+  
+  // Reports
+  generateReport: (data) => api.post('/financial/reports/generate', data),
+  getDailyReport: (date, driverId) => 
+    api.get(`/financial/reports/${date}`, { params: { driver_id: driverId } }),
+  getReportPDF: (reportId) => 
+    api.get(`/financial/reports/${reportId}/pdf`, { responseType: 'blob' }),
 };
 
 export default api;

@@ -2,15 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Truck, MapPin, Package, Navigation, 
-  ArrowLeft, CheckCircle, X
+  ArrowLeft, CheckCircle, X, Briefcase
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import MapView from '../components/MapView';
+import RecordSpendageButton from '../components/RecordSpendageButton';
+import AllocatedLoads from '../components/AllocatedLoads';
 import { tripsAPI, loadsAPI, calculateAPI, vendorsAPI, demoAPI, schedulerAPI } from '../services/api';
 import { getRoute, getMultipleRoutes } from '../services/routing';
 
 const DriverDashboard = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('deadheading'); // 'deadheading' or 'allocated'
   const [step, setStep] = useState('select-route'); // select-route, show-loads, navigate
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
@@ -28,6 +31,9 @@ const DriverDashboard = () => {
   const [showAutoAssignModal, setShowAutoAssignModal] = useState(false); // Show AI assignment modal
   const [autoAssignedLoad, setAutoAssignedLoad] = useState(null); // Store auto-assigned load details
   const [isAutoAssigning, setIsAutoAssigning] = useState(false); // Show loading state
+  
+  // Demo driver ID
+  const driverId = 'demo-driver-123';
   
   // Refs for debouncing
   const originTimeoutRef = useRef(null);
@@ -707,6 +713,7 @@ const DriverDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <RecordSpendageButton driverId="test-driver" />
               <div className="text-right">
                 <p className="text-sm text-gray-500">Today's Earnings</p>
                 <p className="text-2xl font-bold text-green-600">₹12,450</p>
@@ -715,6 +722,40 @@ const DriverDashboard = () => {
           </div>
         </div>
       </header>
+
+      {/* Tab Navigation */}
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-6">
+          <nav className="flex space-x-8">
+            <button
+              onClick={() => setActiveTab('deadheading')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'deadheading'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <Navigation className="w-5 h-5" />
+                <span>Deadheading Loads</span>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('allocated')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'allocated'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <Briefcase className="w-5 h-5" />
+                <span>Allocated Loads</span>
+              </div>
+            </button>
+          </nav>
+        </div>
+      </div>
 
       {/* AI Auto-Assigning Banner */}
       {isAutoAssigning && (
@@ -728,6 +769,8 @@ const DriverDashboard = () => {
       )}
 
       <div className="container mx-auto px-6 py-6">
+        {/* Deadheading Tab */}
+        {activeTab === 'deadheading' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Panel - Controls */}
           <div className="lg:col-span-1 space-y-6">
@@ -1208,6 +1251,21 @@ const DriverDashboard = () => {
             </div>
           </div>
         </div>
+        )}
+
+        {/* Allocated Loads Tab */}
+        {activeTab === 'allocated' && (
+          <AllocatedLoads 
+            driverId={driverId}
+            onSelectLoad={(load) => {
+              // Switch to deadheading tab and navigate
+              setActiveTab('deadheading');
+              setSelectedLoad(load);
+              setStep('navigate');
+              toast.success('Starting navigation to allocated load...');
+            }}
+          />
+        )}
       </div>
 
       {/* AI Auto-Assignment Modal */}

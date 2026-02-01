@@ -33,3 +33,9 @@ python-dotenv==1.0.0
 
 # For realistic data generation
 faker==22.6.0
+
+# PDF Generation
+reportlab==4.0.9
+
+# Scheduling
+apscheduler==3.10.4

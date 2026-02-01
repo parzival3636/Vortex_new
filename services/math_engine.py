@@ -252,3 +252,11 @@ class MathEngine:
 
 # Global instance
 math_engine = MathEngine()
+
+# Export convenience function for backward compatibility
+def calculate_distance(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    """Calculate distance between two points (convenience function)"""
+    from models.domain import Coordinate
+    point_a = Coordinate(lat=lat1, lng=lng1)
+    point_b = Coordinate(lat=lat2, lng=lng2)
+    return math_engine.calculate_distance(point_a, point_b)

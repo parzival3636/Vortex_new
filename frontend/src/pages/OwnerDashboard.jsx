@@ -1,12 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, ArrowLeft, Truck, TrendingUp, DollarSign, MapPin, Activity } from 'lucide-react';
+import { Building2, ArrowLeft, Truck, TrendingUp, DollarSign, MapPin, Activity, FileText, Users } from 'lucide-react';
 import MapView from '../components/MapView';
+import ReportViewer from '../components/ReportViewer';
+import OwnerStatistics from '../components/OwnerStatistics';
+import ManualAllocation from '../components/ManualAllocation';
+import AdminPanel from '../components/AdminPanel';
+import VehicleRegistration from '../components/VehicleRegistration';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const OwnerDashboard = () => {
   const navigate = useNavigate();
   const [selectedTruck, setSelectedTruck] = useState(null);
+  const [activeTab, setActiveTab] = useState('fleet'); // 'fleet', 'allocation', or 'reports'
+  const [refreshKey, setRefreshKey] = useState(0); // For refreshing components
+  
+  // Use demo owner ID
+  const ownerId = 'demo-owner-123';
+  
+  // Callback when vehicle is added
+  const handleVehicleAdded = () => {
+    setRefreshKey(prev => prev + 1); // Trigger refresh
+  };
   
   // Demo fleet data
   const [fleet, setFleet] = useState([
@@ -183,6 +198,54 @@ const OwnerDashboard = () => {
       </header>
 
       <div className="container mx-auto px-6 py-6">
+        {/* Tab Navigation */}
+        <div className="mb-6 border-b border-gray-200">
+          <nav className="flex space-x-8">
+            <button
+              onClick={() => setActiveTab('fleet')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'fleet'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <Truck className="w-5 h-5" />
+                <span>Fleet Management</span>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('allocation')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'allocation'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <Users className="w-5 h-5" />
+                <span>Manual Allocation</span>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('reports')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'reports'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <FileText className="w-5 h-5" />
+                <span>Financial Reports</span>
+              </div>
+            </button>
+          </nav>
+        </div>
+
+        {/* Fleet Management Tab */}
+        {activeTab === 'fleet' && (
+          <>
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           <div className="bg-white rounded-xl shadow-sm p-6">
@@ -308,6 +371,27 @@ const OwnerDashboard = () => {
             </div>
           </div>
         </div>
+          </>
+        )}
+
+        {/* Manual Allocation Tab */}
+        {activeTab === 'allocation' && (
+          <>
+            <AdminPanel />
+            <div className="mt-6">
+              <VehicleRegistration ownerId={ownerId} onVehicleAdded={handleVehicleAdded} />
+            </div>
+            <div className="mt-6">
+              <OwnerStatistics key={refreshKey} ownerId={ownerId} />
+            </div>
+            <ManualAllocation key={refreshKey} ownerId={ownerId} />
+          </>
+        )}
+
+        {/* Financial Reports Tab */}
+        {activeTab === 'reports' && (
+          <ReportViewer driverId="test-driver" />
+        )}
       </div>
     </div>
   );

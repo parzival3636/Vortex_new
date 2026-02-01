@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
-from api import trips, loads, calculate, vendors, demo, scheduler
+from api import trips, loads, calculate, vendors, demo, scheduler, financial_reports, report_scheduler, allocations
 
 app = FastAPI(
     title="Deadheading Optimization System",
@@ -25,6 +25,9 @@ app.include_router(calculate.router)
 app.include_router(vendors.router)
 app.include_router(demo.router)
 app.include_router(scheduler.router)
+app.include_router(financial_reports.router)
+app.include_router(report_scheduler.router)
+app.include_router(allocations.router)
 
 
 @app.get("/")

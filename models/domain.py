@@ -109,3 +109,113 @@ class DriverRatingResponse(BaseModel):
     rating: int
     comment: Optional[str]
     created_at: datetime
+
+
+# ==================== MANUAL ALLOCATION MODELS ====================
+
+class OwnerStatistics(BaseModel):
+    """Owner dashboard statistics"""
+    totalActiveVehicles: int
+    totalPendingLoads: int
+    totalAllocatedLoads: int
+    totalCompletedLoads: int
+    allocationRate: float
+    averageVehicleUtilization: float
+    lastUpdated: datetime
+
+
+class VehicleLocation(BaseModel):
+    """Vehicle location information"""
+    latitude: float
+    longitude: float
+    address: str
+
+
+class VehicleInfo(BaseModel):
+    """Vehicle information for allocation"""
+    id: str
+    name: str
+    currentLocation: VehicleLocation
+    status: str
+    distanceToNearestLoad: float
+
+
+class LoadInfo(BaseModel):
+    """Load information for allocation"""
+    id: str
+    pickupLocation: Coordinate
+    destination: Coordinate
+    status: str
+    specialInstructions: Optional[str] = None
+
+
+class AllocationRequest(BaseModel):
+    """Request to create an allocation"""
+    vehicleId: str
+    loadId: str
+    ownerId: str
+
+
+class AllocationRecord(BaseModel):
+    """Allocation record response"""
+    id: str
+    vehicleId: str
+    loadId: str
+    status: str
+    allocatedAt: datetime
+    completedAt: Optional[datetime] = None
+    cancelledAt: Optional[datetime] = None
+
+
+class DriverAllocatedLoad(BaseModel):
+    """Allocated load for driver"""
+    id: str
+    loadId: str
+    pickupLocation: Coordinate
+    destination: Coordinate
+    status: str
+    estimatedDistanceToPickup: float
+    estimatedTimeToPickup: float
+    totalEstimatedDistance: float
+    totalEstimatedTime: float
+    specialInstructions: Optional[str] = None
+
+
+class DriverAllocatedLoadsSummary(BaseModel):
+    """Summary of all allocated loads for a driver"""
+    totalLoads: int
+    totalDistance: float
+    totalTime: float
+    loads: list[DriverAllocatedLoad]
+
+
+class NavigationState(BaseModel):
+    """Navigation state for live map"""
+    currentLocation: Coordinate
+    pickupPoint: Coordinate
+    destination: Coordinate
+    route: dict
+    nextWaypoint: str
+    distanceToNextWaypoint: float
+    timeToNextWaypoint: float
+
+
+class LocationUpdate(BaseModel):
+    """Location update from driver"""
+    vehicleId: str
+    latitude: float
+    longitude: float
+    accuracy: float
+
+
+class Notification(BaseModel):
+    """Notification for driver"""
+    id: str
+    driverId: str
+    type: str
+    title: str
+    message: str
+    loadId: Optional[str] = None
+    waypointType: Optional[str] = None
+    isRead: bool
+    createdAt: datetime

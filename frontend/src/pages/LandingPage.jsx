@@ -49,9 +49,17 @@ const LandingPage = () => {
               <Truck className="w-8 h-8 text-blue-400" />
               <h1 className="text-2xl font-bold text-white">Deadheading Optimization</h1>
             </div>
-            <div className="flex items-center space-x-2 text-green-400">
-              <Zap className="w-5 h-5" />
-              <span className="text-sm font-medium">AI-Powered</span>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => window.location.href = 'http://localhost:3001'}
+                className="px-6 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/50"
+              >
+                Analytics & Logistics
+              </button>
+              <div className="flex items-center space-x-2 text-green-400">
+                <Zap className="w-5 h-5" />
+                <span className="text-sm font-medium">AI-Powered</span>
+              </div>
             </div>
           </div>
         </div>

@@ -152,10 +152,11 @@ def accept_load(load_id: UUID, trip_id: UUID):
             detail=f"Load with ID {load_id} not found"
         )
     
-    if load['status'] != "available":
+    # Allow accepting loads that are "available" or already "assigned" (by auto-scheduler)
+    if load['status'] not in ["available", "assigned"]:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Load is not available (current status: {load['status']})"
+            detail=f"Load cannot be accepted (current status: {load['status']})"
         )
     
     # Get trip to find driver
@@ -166,8 +167,9 @@ def accept_load(load_id: UUID, trip_id: UUID):
             detail=f"Trip with ID {trip_id} not found"
         )
     
-    # Update load status
-    db.accept_load(str(load_id), str(trip_id), trip['driver_id'])
+    # Update load status to assigned (if not already)
+    if load['status'] != "assigned":
+        db.accept_load(str(load_id), str(trip_id), trip['driver_id'])
     
     # TODO: Create LoadAssignment record and provide navigation
     
