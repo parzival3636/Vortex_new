@@ -7,14 +7,14 @@ class Settings(BaseSettings):
     """Application configuration settings"""
     
     # ChromaDB (embedded, no setup needed!)
-    chroma_persist_directory: str = "./chroma_data"
+    chroma_persist_directory: str = os.getenv("CHROMA_PERSIST_DIRECTORY", "./chroma_data")
     
     # Redis (optional)
     redis_url: str = "redis://localhost:6379/0"
     
-    # Ollama (Local LLM)
-    ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "llama3.1:8b"
+    # Groq (Cloud LLM)
+    groq_api_key: str = ""
+    groq_model: str = "llama-3.1-8b-instant"
     
     # Application
     app_env: str = "development"

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: deadheading-backend
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false  # Set this in Render dashboard for security
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
+      - key: CHROMA_PERSIST_DIRECTORY
+        value: /opt/render/project/src/data/chroma_data
+      - key: APP_ENV
+        value: production
+      - key: DEBUG
+        value: False
+    disk:
+      name: chroma-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1

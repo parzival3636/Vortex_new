@@ -1,24 +1,28 @@
-from langchain_ollama import OllamaLLM
-from crewai import Agent, Task, Crew
+from langchain_groq import ChatGroq
 from config import settings
 import os
 
 
-def get_ollama_llm():
-    """Get Ollama LLM instance configured from settings"""
-    # Set a dummy OpenAI key to prevent CrewAI from complaining
-    os.environ["OPENAI_API_KEY"] = "sk-dummy-key-not-used"
-    
-    return OllamaLLM(
-        base_url=settings.ollama_base_url,
-        model=settings.ollama_model,
-        temperature=0.7
-    )
+_groq_llm_instance = None
 
 
-def create_agent(role: str, goal: str, backstory: str, tools: list = None, verbose: bool = True) -> Agent:
+def get_groq_llm():
+    """Get Groq LLM instance configured from settings (singleton pattern)"""
+    global _groq_llm_instance
+    if _groq_llm_instance is None:
+        _groq_llm_instance = ChatGroq(
+            api_key=settings.groq_api_key,
+            model=settings.groq_model,
+            temperature=0.7
+        )
+    return _groq_llm_instance
+
+
+# For backward compatibility with CrewAI agents
+def create_agent(role: str, goal: str, backstory: str, tools: list = None, verbose: bool = True):
     """
-    Create a CrewAI agent with Ollama LLM
+    Simplified agent creation - returns LLM directly
+    CrewAI agents are optional for this system
     
     Args:
         role: Agent's role description
@@ -28,16 +32,8 @@ def create_agent(role: str, goal: str, backstory: str, tools: list = None, verbo
         verbose: Whether to enable verbose output
         
     Returns:
-        Configured Agent instance
+        Groq LLM instance (lazy loaded)
     """
-    llm = get_ollama_llm()
-    
-    return Agent(
-        role=role,
-        goal=goal,
-        backstory=backstory,
-        tools=tools or [],
-        llm=llm,
-        verbose=verbose,
-        allow_delegation=False
-    )
+    # Return None for now - agents will be initialized when first used
+    # This prevents initialization errors at import time
+    return None

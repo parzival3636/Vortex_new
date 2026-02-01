@@ -5,7 +5,7 @@ from api import trips, loads, calculate, vendors, demo, scheduler, financial_rep
 
 app = FastAPI(
     title="Deadheading Optimization System",
-    description="AI-powered system to eliminate empty return trips for trucks using local Ollama LLM",
+    description="AI-powered system to eliminate empty return trips for trucks using Groq LLM",
     version="1.0.0"
 )
 
@@ -36,7 +36,7 @@ async def root():
         "message": "Deadheading Optimization System API",
         "version": "1.0.0",
         "status": "running",
-        "llm": f"Ollama ({settings.ollama_model})"
+        "llm": f"Groq ({settings.groq_model})"
     }
 
 
